@@ -46,11 +46,13 @@ public class BlackJackGame implements Runnable {
             out.println("- A hand with a higher total than 21 is said to bust.");
             out.println("- Cards 2 through 10 are worth their face value, and face cards (jack, queen, king) are also worth 10.");
             out.println("\nYou start with $100.");
+            
             String inputLine;
+            
             while (player.getMoney() > 0) {
                 out.println("\nPlace your bet:");
                 int bet = Integer.parseInt(in.readLine());
-
+                
                 if (bet > player.getMoney()) {
                     out.println("You cannot bet more than you have.");
                     continue;
@@ -66,7 +68,6 @@ public class BlackJackGame implements Runnable {
                 while (playerTurn) {
                     out.println("\nHit or stand?");
                     inputLine = in.readLine();
-
                     if (inputLine.equalsIgnoreCase("hit")) {
                         player.addCard(deck.drawCard());
                         out.println("Your hand: " + player);
@@ -81,11 +82,9 @@ public class BlackJackGame implements Runnable {
                         out.println("Invalid input! Please type 'hit' to hit, or 'stand' to stand.");
                     }
                 }
-
                 if (player.calculateValue() <= 21) {
                     dealer.hit(deck);
                     out.println("\nDealer's hand: " + dealer);
-
                     if (dealer.calculateValue() > 21 || dealer.calculateValue() < player.calculateValue()) {
                         out.println("\nYou win!");
                         player.newBalance(bet);
@@ -96,7 +95,6 @@ public class BlackJackGame implements Runnable {
                         System.out.println("\nIt's a tie!");
                     }
                 }
-
                 out.println("\nYour current money: $" + player.getMoney());
                 out.println("Do you want to play again?");
                 inputLine = in.readLine();
@@ -104,7 +102,6 @@ public class BlackJackGame implements Runnable {
                     break;
                 }
             }
-
             out.println("\nGame over! You finished with $" + player.getMoney());
         } catch (IOException e) {
             e.printStackTrace();
