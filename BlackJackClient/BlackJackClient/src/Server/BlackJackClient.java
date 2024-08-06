@@ -1,7 +1,9 @@
 package Server;
 
+import org.json.JSONObject;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 /**
  * The client class that connects to the server and interacts with the user through the console.
@@ -12,24 +14,29 @@ import java.net.*;
  * @author bradley.collins
  */
 public class BlackJackClient {
-    private static final String SERVER_ADDRESS = "localhost";
-    private static final int SERVER_PORT = 55555;
+    private static final String serverAddress = "localhost";
+    private static final int portNumber = 55555;
 
     public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
+        try (Socket socket = new Socket(serverAddress, portNumber);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())); //read incoming messages from the server
+             PrintWriter out = new PrintWriter(socket.getOutputStream()); //send messages to the server
+             Scanner stdIn = new Scanner(System.in)) {
 
             String serverResponse;
+
             while ((serverResponse = in.readLine()) != null) {
-                System.out.println(serverResponse); //prints to console showing server sends
-                if (serverResponse.endsWith(":") || serverResponse.trim().endsWith("?")) {
-                    String userInput = stdIn.readLine();
-                    out.println(userInput);
+                JSONObject responseJson = new JSONObject(serverResponse); //parse as a JSON object
+                System.out.println(responseJson.getString("message")); //extract the message from the JSON response
+
+                //do we need user input?
+                if (responseJson.getBoolean("expectsInput")) {
+                    String userInput = stdIn.nextLine();
+                    JSONObject requestJson = new JSONObject();
+                    requestJson.put("input", userInput);
+                    out.println(requestJson.toString()); //send the JSON object to the server
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
