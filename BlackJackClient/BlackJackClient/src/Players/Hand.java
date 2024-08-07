@@ -51,15 +51,18 @@ public class Hand {
      *
      * @return The total value of the hand
      */
-    public int calculateValue() {
+    public int handValue() {
+
         int value = 0;
         int aceCount = 0;
+
         for (PlayingCard card : cards) {
             value += card.getValue();
             if (card.toString().startsWith("A")) {
                 aceCount++;
             }
         }
+        //if the total value is 11 or less, aces are converted from 1 to 11 to maximize the hands value without busting 
         while (aceCount > 0 && value <= 11) {
             value += 10; //count the ace as 11 instead of 1
             aceCount--;
